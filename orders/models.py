@@ -21,3 +21,10 @@ class Menu_Item(models.Model):
     
     def __str__(self):
         return f"{self.type_id.name} - {self.item_name}"
+
+
+class Topping(models.Model):
+    name = models.CharField(max_length=64)
+    
+    def __str__(self):
+        return f"{self.name}"
