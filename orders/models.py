@@ -28,3 +28,12 @@ class Topping(models.Model):
     
     def __str__(self):
         return f"{self.name}"
+    
+
+class Addition(models.Model):
+    name = models.CharField(max_length=64)
+    small_price = models.FloatField(null=True, blank=True)
+    large_price = models.FloatField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.name}"
