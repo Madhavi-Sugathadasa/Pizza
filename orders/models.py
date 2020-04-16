@@ -46,3 +46,14 @@ class Cart(models.Model):
     
     def __str__(self):
         return f"{self.user_id}"
+    
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
+    total = models.FloatField()
+    date_time = models.DateTimeField()
+    status = models.BooleanField(default=False)
+    payment = models.BooleanField(default=False)
+    payment_session = models.CharField(max_length=100, null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.id} - {self.user_id} - {self.date_time} - {self.status}"
