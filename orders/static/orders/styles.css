@@ -1,0 +1,281 @@
+* {
+
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+}
+
+header {
+    max-width: 1200px;
+    padding: 0;
+    margin: auto;
+}
+
+.header {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin: 0;
+}
+
+.header-banner {
+    width: 30%;
+    max-height: 230px;
+}
+
+.header-banner-mddle {
+    width: 40%;
+    max-width: 480px;
+    max-height: 230px;
+}
+
+.header-img {
+    width: 100%;
+    height: 100%;
+    border-top: solid 1px red;
+    border-bottom: solid 1px green;
+}
+
+.navbar,
+main {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.menu-container {
+    padding: 20px;
+    color: #000000;
+}
+.menu-holder{
+    margin: auto;
+    text-align: center;
+}
+.card-holder{
+    display: inline-block;
+}
+.menu-item {
+    width: 16rem;
+}
+
+.img-card {
+    height: 12rem;
+    width: 15.85rem;
+}
+
+.menu-type {
+    text-align: center;
+    font-weight: 600;
+    color: #ffffff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.login-form {
+    margin: 7% auto;
+    border-radius: 5px;
+    padding: 20px;
+    width: 85%;
+}
+
+.item-heading {
+    text-align: center;
+    padding: 20px;
+    border-bottom: dotted 1px #000000;
+}
+
+.sub-headings {
+    padding-bottom: 20px;
+}
+
+.item-desc {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 80%;
+    margin: auto;
+
+}
+
+.item-selection {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.item-selection li {
+    padding-bottom: 20px;
+}
+
+#item-img {
+    border-radius: 5px;
+    border: solid 4px #28a745;
+}
+
+#quantity {
+    width: 80px;
+}
+
+.basket-item-tb {
+    margin: 40px auto;
+    width: 100%;
+}
+
+.basket-item-tb th {
+    padding: 20px 40px;
+}
+
+.basket-item-tb tr {
+    background-color: #28a745;
+    border-bottom: solid 4px #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+
+}
+
+.basket-item-tb tr:first-child {
+    display: none;
+
+}
+
+#total-row {
+    background-color: #034813;
+    color: #ffffff;
+    font-size: 1.5rem;
+    display: block;
+
+}
+
+.basket-item-tb td {
+    padding: 5px;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+.terms-section {
+    margin: 20px auto;
+    background-color: #e2e2e2;
+    padding: 20px;
+}
+
+.no-item {
+    margin: 20px auto;
+    text-align: center;
+    padding: 20px;
+}
+
+.no-item-msg {
+    margin-bottom: 20px;
+}
+
+.order-heading {
+    padding: 20px;
+    border-bottom: dotted 1px #000000;
+}
+.pagination{
+    padding: 20px;
+}
+.pagination a:link,
+.pagination a:visited {
+    color: #28a745;
+
+}
+
+.pagination a:hover {
+    color: #034813;
+}
+
+.title-label {
+    display: inline;
+}
+.loading-container{
+    width: 1200px;
+    margin: 80px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#Error_message {
+    color: red;
+    width: 1200px;
+    margin: 80px auto;
+    padding: 20px;
+    text-align: center;
+}
+@media (min-width: 876px) {
+
+    .login-form {
+        width: 60%;
+
+    }
+
+    .item-desc {
+
+        display: flex;
+        flex-direction: row;
+        width: 600px;
+    }
+
+    .item-selection {
+        padding: 0 20px;
+    }
+
+    .basket-item-tb {
+        margin: 40px auto;
+        width: 100%;
+    }
+
+    .basket-item-tb th {
+        padding: 20px 40px;
+    }
+
+    .basket-item-tb tr {
+        background-color: #28a745;
+        border-bottom: solid 4px #ffffff;
+        display: table-row;
+
+    }
+
+    .basket-item-tb tr:first-child {
+        display: table-row;
+        background-color: #dc3545;
+        color: #ffffff;
+
+    }
+
+    #total-row {
+        background-color: #034813;
+        color: #ffffff;
+        font-size: 1.5rem;
+        display: table-row;
+
+    }
+
+    .basket-item-tb td {
+        padding: 40px;
+        vertical-align: top;
+        font-weight: bold;
+    }
+
+    .title-label {
+        display: none;
+    }
+
+}
+
+@media (min-width: 1024px) {
+
+    .item-desc {
+
+        display: flex;
+        flex-direction: row;
+        width: 600px;
+    }
+}
