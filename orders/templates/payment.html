@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payment Redirection
+{% endblock %}
+
+{% block body %}
+
+    
+     <div class="loading-container">
+        <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border text-danger" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border text-danger" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border text-danger" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <h1 id="Error_message"></h1>
+    </div>
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripe = Stripe('{{STRIPE_PUBLISHABLE_API_KEY}}');
+
+        stripe.redirectToCheckout({
+            // Make the id field from the Checkout Session creation API response
+            // available to this file, so you can provide it as parameter here
+            // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+            sessionId: '{{CHECKOUT_SESSION_ID}}'
+        }).then(function(result) {
+            // If `redirectToCheckout` fails due to a browser or network
+            // error, display the localized error message to your customer
+            // using `result.error.message`.
+            document.querySelector('#Error_message').innerHTML = "ERRROR:: " + result.error.message;
+        });
+
+    </script>
+    
+{% endblock %}
