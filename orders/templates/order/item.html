@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load template_filters %}
+
+{% block title %}
+{{item}}
+{% endblock %}
+
+{% block body %}
+<div>
+    <h2 class="item-heading">{{item}}</h2>
+    <ul class="item-desc">
+        <li><img src="/Media/{{item.image}}" class="img-card" alt="{{ menu_item }}" id="item-img"></li>
+        <li>
+            <form action="{% url 'add' item.id %}" method="post">
+                {% csrf_token %}
+                <ul class="item-selection">
+                    {% if item.is_mult_cat %}
+                    <li>
+                        <h5>Size</h5>
+                        <select id="size" name="size" class="form-control">
+                            {% if item.small_price %}
+                            <option value="S">Small - {{ item.small_price|currency_symbol }}</option>
+                            {% endif %}
+                            {% if item.large_price %}
+                            <option value="L">Large - {{ item.large_price|currency_symbol }}</option>
+                            {% endif %}
+                        </select>
+                    </li>
+                    {% else %}
+                    <li>
+                        {% if item.small_price %}
+                        <p>{{ item.small_price|currency_symbol }}</p>
+                        {% else %}
+                        <p>{{ item.large_price|currency_symbol }}</p>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                    {% if item.no_of_toppings > 0 %}
+                    {% for i in item.no_of_toppings|times %}
+                    <li>
+                        <h5>Topping {{i}}</h5>
+                        <select id="topping_{{i}}" name="topping_{{i}}" class="form-control">
+                            {% for topping in toppings %}
+                            <option value="{{topping.id}}">{{topping}}</option>
+                            {% endfor %}
+                        </select>
+                    </li>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if additions %}
+                    <li>
+                        <h5>Extras</h5>
+                    </li>
+                    {% for addition in additions %}
+                    <li>
+                        <input type="checkbox" id="check_{{addition.id}}" name="check_{{addition.id}}" value="{{addition.id}}" > <label for="check_{{addition.id}}" class="form-check-label" >{{addition.name}} +{{ addition.small_price|currency_symbol }}</label>
+                    </li>
+                    {% endfor %}
+
+                    {% endif %}
+                    <li>
+                        <h5>QTY</h5> <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control">
+                    </li>
+                    <li>
+                        <input type="submit" value="Add to cart" class="btn btn-danger">
+                        <a href="{% url 'index' %}" class="btn btn-success">Back to Menu</a>
+                    </li>
+                </ul>
+            </form>
+        </li>
+    </ul>
+
+</div>
+{% endblock %}
