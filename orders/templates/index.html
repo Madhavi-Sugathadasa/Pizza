@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}
+Pinocchio's Pizza &#38; Subs
+{% endblock %}
+{% block body %}
+{% load template_filters %}
+{% for menu_type in menu_types%}
+
+<div class="menu-container">
+   <h2 class="menu-type bg-danger">{{menu_type.name}}</h2>
+    <div class="card-deck menu-holder">
+        {% for menu_item in menu_items|get_item:menu_type.id %}
+        <div class="card-holder">
+            <div class="card bg-success mt-4 menu-item" >
+                <img src="/Media/{{menu_item.image}}" class="card-img-top img-card" alt="{{ menu_item }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ menu_item.item_name}}</h5>
+                    {% if menu_item.is_mult_cat %}
+                        {% if menu_item.small_price%}
+                        <p class="card-text">From {{ menu_item.small_price|currency_symbol }}</p>
+                        {% else %}
+                        <p class="card-text">From {{ menu_item.large_price|currency_symbol }}</p>
+                        {% endif %}
+                    {% else %}
+                    <p class="card-text">From {{ menu_item.large_price|currency_symbol }}</p>
+                    {% endif %}
+                    <a href="{% url 'item' menu_item.id %}" class="btn btn-danger">Select</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        No Items
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
