@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+{% load template_filters %}
+{% block title %}
+Shopping Cart
+{% endblock %}
+
+{% block body %}
+<h2 class="item-heading">Your shooping cart</h2>
+{% if basket %}
+<table class="basket-item-tb">
+    <tr>
+        <th>Item Name</th>
+        <th>Size</th>
+        <th>Description</th>
+        <th>QTY</th>
+        <th>Total</th>
+        <th></th>
+    </tr>
+    {% for basket_item in basket %}
+    <tr>
+        <td>
+            {{basket_item|get_item:"item_name" }}
+
+        </td>
+        <td>
+            {% if basket_item|get_item:"size" %}
+            <span class="title-label">Size: </span>
+            {% if basket_item|get_item:"size" == 'S' %}
+            Small
+            {% endif %}
+            {% if basket_item|get_item:"size" == 'L' %}
+            Large
+            {% endif %}
+            {% endif %}
+        </td>
+        <td>
+            {% if basket_item|get_item:"toppings" %}
+            Toopings:
+            {% for topping in basket_item|get_item:"toppings" %}
+            {% if forloop.last %}
+            {{topping|get_item:"name"}}
+            {% else%}
+            {{topping|get_item:"name"}},
+            {% endif %}
+            {% endfor %}
+
+            {% endif %}
+            {% if basket_item|get_item:"extras" %}
+            Extras:
+            {% for add_on in basket_item|get_item:"extras" %}
+            {% if forloop.last %}
+            {{add_on|get_item:"name"}}
+            {% else%}
+            {{add_on|get_item:"name"}},
+            {% endif %}
+            {% endfor %}
+
+            {% endif %}
+        </td>
+        <td>
+            <span class="title-label">QTY: </span>{{basket_item|get_item:"quantity"}}
+        </td>
+        <td>
+            <span class="title-label">Total: </span>{{basket_item|get_item:"price"|currency_symbol }}
+        </td>
+        <td><a href="{% url 'remove' forloop.counter %}" class="btn btn-danger">Remove</a></td>
+
+    </tr>
+    {% endfor %}
+    <tr id="total-row">
+        <td colspan="4">Total</td>
+        <td>{{basket_total|currency_symbol}}</td>
+        <td></td>
+    </tr>
+</table>
+{% else %}
+<div class="no-item"><h4 class="no-item-msg">Your shooping cart is empty</h4> <br> <a href="{% url 'index' %}" class="btn btn-success">Back to Menu</a></div>
+{% endif %}
+{% if basket %}
+<div class="terms-section">
+    <form action="{% url 'order' %}" method="post">
+        {% csrf_token %}
+        <input id="terms_agreement" type="checkbox" name="terms_agreement" required>
+        <span> I have read and agree with the <a href="{% static 'orders/terms.html' %}"  target="_blank">Terms &amp; Conditions</a> and <a href="{% static 'orders/privacy.html' %}" target="_blank">Privacy Policy</a></span>
+        <p>By clicking “Place Order”, I acknowledge that, if I have ordered alcohol, I am aged 18 or over and will provide photo identification at delivery if requested by Pinocchio's Pizza &#38; Subs.
+            Details about how we collect, use, hold and disclose personal information can be found in our <a href="{% static 'orders/privacy.html' %}" target="_blank">privacy policy</a>.</p>
+
+        <input type="submit" value="Place Order {{basket_total|currency_symbol}}" class="btn btn-danger">
+        <a href="{% url 'index' %}" class="btn btn-success">Back to Menu</a>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
