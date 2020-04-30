@@ -1,0 +1,15 @@
+{% extends "users/staff/base.html" %}
+
+{% block title %}
+Error
+{% endblock %}
+
+{% block body %}
+<h2 class="item-heading">Error</h2>
+
+<div class="no-item">
+    <h4 class="no-item-msg">{{ message }}</h4>
+    <a href="{% url 'staff_orders' %}" class="btn btn-success">Back to orders</a>
+</div>
+
+{% endblock %}
