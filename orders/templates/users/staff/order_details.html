@@ -1,0 +1,52 @@
+{% extends "users/staff/base.html" %}
+{% load template_filters %}
+{% block title %}
+Order details
+{% endblock %}
+
+{% block body %}
+<h2 class="item-heading">Customer order confirmation</h2>
+<div class="order-heading">
+    <h4>Order Id : {{order.id}}</h4>
+    <h4>Customer : {{order.user.username}}</h4>
+    <h4>Oder Date: {{order.date_time}}</h4>
+    <h4>Order Status: {% if order.status %}Completed{% else %}Pending{% endif %}</h4>
+</div>
+
+<table class="basket-item-tb">
+    <tr>
+        <th>Item Name</th>
+        <th>Size</th>
+        <th>Description</th>
+        <th>QTY</th>
+        <th>Total</th>
+    </tr>
+    {% for order_item in order_items %}
+    <tr>
+        <td> {{order_item.item_name }}</td>
+        <td>
+            {% if order_item.size %}
+            <span class="title-label">Size: </span>
+            {% if order_item.size == 'S' %}
+            Small
+            {% endif %}
+            {% if order_item.size == 'L' %}
+            Large
+            {% endif %}
+            {% endif %}
+        </td>
+        <td>
+            {% if order_item.description %}
+            {{order_item.description}}
+            {% endif %}
+        </td>
+        <td><span class="title-label">QTY: </span>{{order_item.quantity}}</td>
+        <td><span class="title-label">Total: </span>{{order_item.price |currency_symbol }}</td>
+    </tr>
+    {% endfor %}
+    <tr id="total-row">
+        <td colspan="4">Total</td>
+        <td>{{order.total|currency_symbol}}</td>
+    </tr>
+</table>
+{% endblock %}
