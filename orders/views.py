@@ -131,3 +131,12 @@ def register_view(request):
     else:
         return render(request, "users/customers/register.html", {"message":None})
     
+    
+def logout_view(request):
+    is_staff = request.user.is_staff
+    logout(request)
+    #if staff memeber , send to staff login page
+    if is_staff:
+        return HttpResponseRedirect(reverse("staff_login"))
+    else:
+        return render(request, "users/customers/login.html", {"message": None})
