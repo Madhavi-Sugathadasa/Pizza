@@ -140,3 +140,23 @@ def logout_view(request):
         return HttpResponseRedirect(reverse("staff_login"))
     else:
         return render(request, "users/customers/login.html", {"message": None})
+    
+
+@login_required(login_url='login')
+def index(request):
+    try:
+        dict_menu_items ={}
+        # load all menu types on their display order
+        menu_types = Menu_Type.objects.all().order_by('display_order')
+        for menu_type in menu_types:
+            # laod menu items for each menu type
+            selected_items = Menu_Item.objects.filter(type_id = menu_type.id)
+            if selected_items:
+                dict_menu_items[menu_type.id] = selected_items
+    except Menu_Type.DoesNotExist:
+        return render(request, "error.html", {"message": "Menu types does not exist."})
+    except Menu_Item.DoesNotExist:
+        return render(request, "error.html", {"message": "Menu items does not exist."})
+    
+    context = {"menu_types":menu_types, "menu_items":dict_menu_items, "user":request.user}
+    return render(request, "index.html", context)
