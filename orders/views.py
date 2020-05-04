@@ -180,3 +180,108 @@ def item(request, menu_id):
         context["additions"] = additions
     
     return render(request, "order/item.html", context)
+
+
+@login_required(login_url='login')
+def add(request, menu_id):
+    # add selected menu item to the basket
+    try:
+        item = Menu_Item.objects.get(pk=menu_id)
+    except KeyError:
+        return render(request, "error.html", {"message": "No selection."})
+    except Menu_Item.DoesNotExist:
+        return render(request, "error.html", {"message": "No menu item."})
+    
+    dict_item_selection = {}
+    size = None
+    toppings = []
+    extras = []
+    quantity = 0
+    
+    # read quantitiy
+    try:
+        quantity = int(request.POST["quantity"])
+    except KeyError:
+        return render(request, "error.html", {"message": "Invalid quantity."})
+    if quantity <= 0:
+        return render(request, "error.html", {"message": "Invalid quantity."})
+    
+    # if item has mutiple sizes, read selected size
+    if item.is_mult_cat :
+        size = request.POST["size"]
+        if not size :
+            return render(request, "error.html", {"message": "Please choose the size."})
+        if not size in ["S","L"] :
+            return render(request, "error.html", {"message": "Invalid size."})
+    
+    # if item has toppings attached to it, read selected toppings   
+    if item.no_of_toppings > 0:
+        for i in range(1, item.no_of_toppings + 1):
+            try:
+                topping_id = int(request.POST["topping_" + str(i)])
+                topping = Topping.objects.get(pk=topping_id)
+            except KeyError:
+                return render(request, "error.html", {"message": "Invalid selection."})
+            except Topping.DoesNotExist:
+                return render(request, "error.html", {"message": ("Please select topping" + str(i))})
+            toppings.append({"id":topping.id, "name":topping.name})
+    
+    # if item type is 'Subs', read selected add-ons (extras)
+    if item.type_id.name == 'Subs':
+        additions = Addition.objects.all()
+        for addition in additions:
+            if request.POST.get("check_" + str(addition.id)):
+                try:
+                    addition_id = int(request.POST.get("check_" + str(addition.id)))
+                    add_on = Addition.objects.get(pk=addition_id)
+                except KeyError:
+                    return render(request, "error.html", {"message": "Invalid selection."})
+                except Addition.DoesNotExist:
+                    return render(request, "error.html", {"message": "Invalid selection."})
+                extras.append({"id":add_on.id, "name":add_on.name})
+    
+    
+    dict_item_selection["item"] = item.id
+    dict_item_selection["item_name"] = item.type_id.name + " - " + item.item_name
+   
+    if size:
+        dict_item_selection["size"] = size
+    if toppings:
+        dict_item_selection["toppings"] = toppings
+    if extras:
+        dict_item_selection["extras"] = extras
+    
+    
+    basket = []
+    if 'basket' in request.session:
+        basket = request.session['basket']
+    if not basket:
+        basket =[]
+    match_found = False
+    # if same type of basket item is found on previous items, just increase the quantity of that item, otherwise add item to the basket
+    for idx, basket_item in enumerate(basket):
+        # Temperary setting quantities to equal to find a exact match, later correct value will be reassign
+        dict_item_selection["quantity"] = basket_item["quantity"]
+        
+        # check item already exists
+        if (dict_item_selection == basket_item):
+            match_found = True
+            basket[idx]["quantity"] += quantity
+            break
+    # if no match found, update the correct quantity and add to basket & update session
+    if not match_found:
+        dict_item_selection["quantity"] = quantity
+        basket.append(dict_item_selection)
+    request.session['basket'] = basket    
+    
+    # saving basket to the Cart table as a json text, if user log out & login again then previously added basket will display from this saved data
+    shopping_cart = Cart()
+    saved_basket = Cart.objects.filter(user_id = request.user.id)
+    if saved_basket:
+        shopping_cart.id = saved_basket[0].id
+    shopping_cart.date_time = datetime.now()
+    shopping_cart.user_id = request.user
+    shopping_cart.basket = json.dumps(basket)
+    shopping_cart.save()
+    
+    return HttpResponseRedirect(reverse("cart"))
