@@ -160,3 +160,23 @@ def index(request):
     
     context = {"menu_types":menu_types, "menu_items":dict_menu_items, "user":request.user}
     return render(request, "index.html", context)
+
+
+@login_required(login_url='login')
+def item(request, menu_id):
+    # load selected menu item details
+    try:
+        item = Menu_Item.objects.get(pk=menu_id)
+    except Menu_Item.DoesNotExist:
+        return render(request, "error.html", {"message": "item does not exist."})
+    context = {
+      "item": item
+    }
+    if item.no_of_toppings > 0:
+        toppings = Topping.objects.all()
+        context["toppings"] = toppings
+    if item.type_id.name == 'Subs':
+        additions = Addition.objects.all()
+        context["additions"] = additions
+    
+    return render(request, "order/item.html", context)
