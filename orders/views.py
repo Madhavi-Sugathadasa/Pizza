@@ -94,3 +94,40 @@ def login_view(request):
             return render(request, "users/customers/login.html", {"message": "Invalid credentials."})
     else:
         return render(request, "users/customers/login.html", {"message": None})
+
+    
+def register_view(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        confirm_password = request.POST["confirm_password"]
+        first_name = request.POST["first_name"]
+        last_name = request.POST["last_name"]
+        email = request.POST["email"]
+
+        if not username:
+            return render(request, "users/customers/register.html", {"message": "Must provide username."})
+        if not password:
+            return render(request, "users/customers/register.html", {"message": "Must provide password."})
+        if password != confirm_password:
+            return render(request, "users/customers/register.html", {"message": "Passwords didn't match."})
+        if not first_name:
+            first_name = None
+        if not last_name:
+            last_name = None
+        if not email:
+            email = None
+
+        try:
+            User.objects.create_user(username=username, password=password,  first_name=first_name, last_name=last_name, email=email)
+        except IntegrityError:
+            return render(request, "users/customers/register.html", {"message": "User already exists."})
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "users/customers/login.html", {"message": "Invalid credentials."})
+    else:
+        return render(request, "users/customers/register.html", {"message":None})
+    
