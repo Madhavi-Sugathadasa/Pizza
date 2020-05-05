@@ -354,3 +354,32 @@ def shopping_cart(request):
         "basket_total":basket_total
     }
     return render(request, "order/basket.html", context)
+
+
+@login_required(login_url='login')
+def remove_item(request, cart_id):
+    # remove selected item form the basket
+    basket = []
+    
+    if 'basket' in request.session:
+        basket = request.session['basket']
+        
+    basket_length = len(basket)
+    if basket_length < cart_id:
+        return render(request, "error.html", {"message": "Invalid cart item."})
+    basket.pop(cart_id - 1)
+    request.session['basket'] = basket
+    
+    shopping_cart = Cart()
+    saved_basket = Cart.objects.filter(user_id = request.user.id)
+    if saved_basket:
+        shopping_cart.id = saved_basket[0].id
+    if basket:
+        shopping_cart.date_time = datetime.now()
+        shopping_cart.user_id = request.user
+        shopping_cart.basket = json.dumps(basket)
+        shopping_cart.save()
+    else:
+        # if basket is empty remove cart from DB
+        shopping_cart.delete()
+    return HttpResponseRedirect(reverse("cart"))
