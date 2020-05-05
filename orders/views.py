@@ -285,3 +285,72 @@ def add(request, menu_id):
     shopping_cart.save()
     
     return HttpResponseRedirect(reverse("cart"))
+
+
+@login_required(login_url='login')
+def shopping_cart(request):
+    # view shopping cart
+    basket = []
+    if 'basket' in request.session:
+        basket = request.session['basket']
+        
+    # update basket with latest prices and check items are still availble
+    basket_total = 0.00
+    if basket:
+        for idx, basket_item in enumerate(basket):
+            item_total_price = 0.00
+            item = None
+            try:
+                item = Menu_Item.objects.get(pk=basket_item.get("item"))
+            except Menu_Item.DoesNotExist:
+                    return render(request, "error.html", {"message": "Some of the basket items are no longer availble."})
+            if item:
+                size = basket_item.get("size")
+                if not size:
+                    item_total_price += item.small_price if item.small_price else item.large_price
+                else:
+                    if size == 'S':
+                        item_total_price += item.small_price 
+                    elif size == 'L':
+                        item_total_price += item.large_price
+                
+                toppings = basket_item.get("toppings")
+                if toppings:
+                    for topping in toppings:
+                        topping_item = None
+                        try:
+                            topping_item = Topping.objects.get(pk=topping["id"])
+                        except Topping.DoesNotExist:
+                            return render(request, "error.html", {"message": "Some toppings are no longer availble."})
+                
+                extras = basket_item.get("extras")
+                
+                if extras:
+                    for add_on in extras:
+                        add_on_item = None
+                        try:
+                            add_on_item = Addition.objects.get(pk=add_on["id"])
+                        except Addition.DoesNotExist:
+                            return render(request, "error.html", {"message": "Some add ons are no longer availble."})
+                        if add_on_item:
+                            if size:
+                                if size == 'S':
+                                    item_total_price += add_on_item.small_price
+                                elif size == 'L':
+                                    item_total_price += add_on_item.large_price
+                quantity = basket_item.get("quantity")
+                item_total_price *= quantity
+                basket[idx]["price"] = item_total_price
+                basket_total += item_total_price
+            else:
+                return render(request, "error.html", {"message": "Invalid cart item."})
+    
+    # setting session variables order total and order_items
+    request.session['order_total'] = basket_total
+    request.session['order_items'] = basket
+    
+    context = {
+        "basket": basket,
+        "basket_total":basket_total
+    }
+    return render(request, "order/basket.html", context)
