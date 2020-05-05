@@ -383,3 +383,117 @@ def remove_item(request, cart_id):
         # if basket is empty remove cart from DB
         shopping_cart.delete()
     return HttpResponseRedirect(reverse("cart"))
+
+
+@login_required(login_url='login')
+def order(request):
+    # redirect customer to stripe payment page
+    
+    # check whether user agreed to terms and conditions
+    try:
+        terms_agreement = request.POST["terms_agreement"]
+    except KeyError:
+        return HttpResponseRedirect(reverse("cart"))
+    
+    order_items = []
+    if 'order_items' in request.session:
+        order_items = request.session['order_items']
+    else:
+        return render(request, "error.html", {"message": "Invalid request."})
+    if not order_items:
+        return render(request, "error.html", {"message": "There are no items in the cart."})
+    order_total = 0.00
+    if 'order_total' in request.session:
+        order_total = float(request.session['order_total'])
+    else:
+        return render(request, "error.html", {"message": "Invalid request."})
+    
+    stripe_price_items = []
+    
+    for order_item in order_items:
+        item_name = order_item.get("item_name")
+        size = order_item.get("size")
+        item_total_price = float(order_item.get("price"))
+        quantity = int(order_item.get("quantity"))
+        per_item_price = float(item_total_price/quantity)
+        
+        description = item_name
+        
+        toppings = order_item.get("toppings")
+        topping_description = ""
+        if toppings:
+            topping_description += ", Toppings: "
+            for topping in toppings:
+                topping_name = topping["name"]
+                if topping_name:
+                    if topping == toppings[-1]:
+                        topping_description += topping_name
+                    else:
+                        topping_description += topping_name + ", "
+        
+        extras_description = ""
+        extras = order_item.get("extras")
+
+        if extras:
+            extras_description += ", Extras: "
+            for add_on in extras:
+                add_on_name = add_on["name"]
+                if add_on_name:
+                    if add_on == extras[-1]:
+                        extras_description += add_on_name
+                    else:
+                        extras_description += add_on_name + ", "
+        
+        if topping_description:
+            description += topping_description
+        if extras_description:
+            description += extras_description
+        if size:
+            if size == "S":
+                description += ", Size: Small"
+            if size == "L":
+                description += ", Size: Large"
+                
+                    
+        product_id = "Item_ID_" + str(order_item.get("item"))
+        
+        
+        # try to rerive product from stripe if already in the system, otherwise create a new product
+        try:
+            product = stripe.Product.retrieve(product_id)
+        except stripe.error.InvalidRequestError:
+            product = None
+            
+        if not product:
+            attributes = []
+            if size:
+                attributes.append ("size")
+            # creating a new stripe product
+            product = stripe.Product.create(
+                id = product_id,
+                name= item_name,
+                attributes = attributes,
+            )
+        # creating ad-hoc prices (I decided to create ad-hoc pricing due to different sizes and different - add ons)
+        price ={
+            'unit_amount':int(per_item_price * 100), # covert to cents
+            'currency': getattr(settings, "CURRENCY", None),
+            'product': product.id,
+        }
+        
+        stripe_price_items.append({"price_data":price, "quantity":quantity, "description":description,})
+
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items= stripe_price_items,
+        mode='payment',
+        success_url=getattr(settings, "PAYMENT_SUCCESS_URL", None),
+        cancel_url=getattr(settings, "PAYMENT_CANCEL_URL", None),
+    )
+    context = {
+        "STRIPE_PUBLISHABLE_API_KEY":getattr(settings, "STRIPE_PUBLISHABLE_API_KEY", None),
+        "CHECKOUT_SESSION_ID":session.id,
+    }
+    request.session['CHECKOUT_SESSION_ID'] = session.id
+    return render(request, "payment.html", context)
+ 
