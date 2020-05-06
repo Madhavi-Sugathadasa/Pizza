@@ -497,3 +497,106 @@ def order(request):
     request.session['CHECKOUT_SESSION_ID'] = session.id
     return render(request, "payment.html", context)
  
+    
+@login_required(login_url='login')
+def payment_success(request):
+    # when stripe payment is success, it will redirect here
+    # TODO :: we need to integrate stripe WEBHOOK before redirect here, since webhook can not setup with local host I havent integrate it yet
+    # check session ids are equal
+    payment_session_id = request.session['CHECKOUT_SESSION_ID']
+    
+    session_id_from_url = ""
+    try:
+        session_id_from_url = request.GET["session_id"]
+    except KeyError:
+        return render(request, "error.html", {"message": "Invalid request."})
+    if payment_session_id != session_id_from_url:
+        return render(request, "error.html", {"message": "Invalid request."})
+    
+    order_items = []
+    if 'order_items' in request.session:
+        order_items = request.session['order_items']
+    else:
+        return render(request, "error.html", {"message": "Invalid request."})
+    if not order_items:
+        return render(request, "error.html", {"message": "Invalid request."})
+    order_total = 0.00
+    if 'order_total' in request.session:
+        order_total = float(request.session['order_total'])
+    else:
+        return render(request, "error.html", {"message": "Invalid request."})
+    
+    # saving order to DB
+    order = Order()
+    order.user = request.user
+    order.total = order_total
+    order.date_time = datetime.now()
+    order.payment = True
+    order.payment_session = payment_session_id
+    order.save()
+    order_id = order.id
+    
+    
+    # saving order items to DB
+    for ord_item in order_items:
+        order_item = Order_Item()
+        order_item.item_name = ord_item.get("item_name")
+        size = ord_item.get("size")
+        if size:
+            order_item.size = size
+        
+        description = ""
+        
+        toppings = ord_item.get("toppings")
+        topping_description = ""
+        if toppings:
+            topping_description += "Toppings: "
+            for topping in toppings:
+                topping_name = topping["name"]
+                if topping_name:
+                    if topping == toppings[-1]:
+                        topping_description += topping_name
+                    else:
+                        topping_description += topping_name + ", "
+        
+        extras_description = ""
+        extras = ord_item.get("extras")
+
+        if extras:
+            extras_description += "Extras: "
+            for add_on in extras:
+                add_on_name = add_on["name"]
+                if add_on_name:
+                    if add_on == extras[-1]:
+                        extras_description += add_on_name
+                    else:
+                        extras_description += add_on_name + ", "
+        
+        if topping_description:
+            description = topping_description
+        if extras_description:
+            description = extras_description
+        if description:
+            order_item.description = description
+        
+    
+        order_item.quantity =  ord_item.get("quantity")
+        order_item.price = float(ord_item.get("price"))
+        order_item.order_id = order
+        order_item.save()
+    
+    # remove virtual shopping cart from DB and from session
+    shopping_cart = Cart()
+    saved_basket = Cart.objects.filter(user_id = request.user.id)
+    if saved_basket:
+        shopping_cart.id = saved_basket[0].id
+        shopping_cart.delete()
+    request.session['basket'] = None
+    
+    # remove other session variables
+    request.session['CHECKOUT_SESSION_ID'] = None
+    request.session['order_total'] = None
+    request.session['order_items'] = None
+    
+    #save payment details to DB
+    return HttpResponseRedirect(reverse("confirmation", args=(order_id,)))
