@@ -606,3 +606,20 @@ def payment_success(request):
 def payment_cancel(request):
     request.session['CHECKOUT_SESSION_ID'] = None
     return HttpResponseRedirect(reverse("cart"))
+
+
+
+@login_required(login_url='login')
+def confirmation(request, order_id):
+    # order confirmation
+    order = Order.objects.filter(pk = order_id, user= request.user)
+    if not order:
+        return render(request, "error.html", {"message": "Invalid order."})
+    order_items = Order_Item.objects.filter(order_id = order[0].id)
+    if not order_items:
+        return render(request, "error.html", {"message": "There are no items in your order"})
+    context = {
+        "order":order[0],
+        "order_items":order_items
+    }
+    return render(request, "order/confirmation.html", context)
