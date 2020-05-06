@@ -600,3 +600,9 @@ def payment_success(request):
     
     #save payment details to DB
     return HttpResponseRedirect(reverse("confirmation", args=(order_id,)))
+
+
+@login_required(login_url='login')
+def payment_cancel(request):
+    request.session['CHECKOUT_SESSION_ID'] = None
+    return HttpResponseRedirect(reverse("cart"))
