@@ -623,3 +623,18 @@ def confirmation(request, order_id):
         "order_items":order_items
     }
     return render(request, "order/confirmation.html", context)
+
+
+@login_required(login_url='login')
+def orders(request):
+    # show user thier previous orders
+    # added pagination
+    orders = Order.objects.filter(user= request.user).order_by('-date_time')
+    paginator = Paginator(orders, getattr(settings, "NO_OF_ORDERS_PER_PAGE", 10))
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+    }
+    return render(request, "orders/orders.html", context)
