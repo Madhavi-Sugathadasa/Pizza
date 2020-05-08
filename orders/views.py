@@ -675,3 +675,19 @@ def staff_orders_view(request):
         'page_obj': page_obj,
     }
     return render(request, "users/staff/orders.html", context)
+
+
+@staff_member_required(login_url='staff_login')
+def staff_order_details(request, order_id):
+    # order details page
+    order = Order.objects.filter(pk = order_id)
+    if not order:
+        return render(request, "users/staff/error.html", {"message": "Invalid customer order."})
+    order_items = Order_Item.objects.filter(order_id = order[0].id)
+    if not order_items:
+        return render(request, "users/staff/error.html", {"message": "There are no items in this customer order"})
+    context = {
+        "order":order[0],
+        "order_items":order_items
+    }
+    return render(request, "users/staff/order_details.html", context)
