@@ -638,3 +638,26 @@ def orders(request):
         'page_obj': page_obj,
     }
     return render(request, "orders/orders.html", context)
+
+
+def staff_login_view(request):
+    # staff login page
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        if not username:
+            return render(request, "users/staff/login.html", {"message": "Must provide username."})
+        if not password:
+            return render(request, "users/staff/login.html", {"message": "Must provide password."})
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            if request.user.is_staff:
+                return HttpResponseRedirect(reverse("staff_orders"))
+            else:
+                logout(request)
+                return render(request, "users/staff/login.html", {"message": "You are not authorized to view this page."})
+        else:
+            return render(request, "users/staff/login.html", {"message": "Invalid credentials."})
+    else:
+        return render(request, "users/staff/login.html", {"message": None})
