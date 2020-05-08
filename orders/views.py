@@ -95,7 +95,6 @@ def login_view(request):
     else:
         return render(request, "users/customers/login.html", {"message": None})
 
-    
 def register_view(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -131,7 +130,7 @@ def register_view(request):
     else:
         return render(request, "users/customers/register.html", {"message":None})
     
-    
+
 def logout_view(request):
     is_staff = request.user.is_staff
     logout(request)
@@ -140,7 +139,7 @@ def logout_view(request):
         return HttpResponseRedirect(reverse("staff_login"))
     else:
         return render(request, "users/customers/login.html", {"message": None})
-    
+
 
 @login_required(login_url='login')
 def index(request):
@@ -180,7 +179,6 @@ def item(request, menu_id):
         context["additions"] = additions
     
     return render(request, "order/item.html", context)
-
 
 @login_required(login_url='login')
 def add(request, menu_id):
@@ -286,7 +284,6 @@ def add(request, menu_id):
     
     return HttpResponseRedirect(reverse("cart"))
 
-
 @login_required(login_url='login')
 def shopping_cart(request):
     # view shopping cart
@@ -355,7 +352,6 @@ def shopping_cart(request):
     }
     return render(request, "order/basket.html", context)
 
-
 @login_required(login_url='login')
 def remove_item(request, cart_id):
     # remove selected item form the basket
@@ -383,7 +379,6 @@ def remove_item(request, cart_id):
         # if basket is empty remove cart from DB
         shopping_cart.delete()
     return HttpResponseRedirect(reverse("cart"))
-
 
 @login_required(login_url='login')
 def order(request):
@@ -496,8 +491,8 @@ def order(request):
     }
     request.session['CHECKOUT_SESSION_ID'] = session.id
     return render(request, "payment.html", context)
- 
     
+
 @login_required(login_url='login')
 def payment_success(request):
     # when stripe payment is success, it will redirect here
@@ -607,8 +602,7 @@ def payment_cancel(request):
     request.session['CHECKOUT_SESSION_ID'] = None
     return HttpResponseRedirect(reverse("cart"))
 
-
-
+    
 @login_required(login_url='login')
 def confirmation(request, order_id):
     # order confirmation
@@ -639,7 +633,6 @@ def orders(request):
     }
     return render(request, "orders/orders.html", context)
 
-
 def staff_login_view(request):
     # staff login page
     if request.method == "POST":
@@ -661,7 +654,7 @@ def staff_login_view(request):
             return render(request, "users/staff/login.html", {"message": "Invalid credentials."})
     else:
         return render(request, "users/staff/login.html", {"message": None})
-    
+
 
 @staff_member_required(login_url='staff_login')
 def staff_orders_view(request):
@@ -691,3 +684,37 @@ def staff_order_details(request, order_id):
         "order_items":order_items
     }
     return render(request, "users/staff/order_details.html", context)
+
+
+@staff_member_required(login_url='staff_login')
+def change_status(request, order_id):
+    # change order status 
+    order = Order.objects.filter(pk = order_id)
+    if not order:
+        return HttpResponse(
+            json.dumps({"Error":"Invalid customer order."}),
+            content_type="application/json"
+        )
+    try:
+        status = request.POST["status"]
+    except KeyError:
+        return HttpResponse(
+            json.dumps({"Error":"Invalid submission."}),
+            content_type="application/json"
+        )
+    if status in ['True', 'False']:
+        order_item = order[0]
+        order_item.status = status
+        order_item.save()
+        
+        return HttpResponse(
+            json.dumps({"success": True}),
+            content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"Error":"Invalid submission."}),
+            content_type="application/json"
+        )
+
+    
