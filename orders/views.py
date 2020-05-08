@@ -661,3 +661,17 @@ def staff_login_view(request):
             return render(request, "users/staff/login.html", {"message": "Invalid credentials."})
     else:
         return render(request, "users/staff/login.html", {"message": None})
+    
+
+@staff_member_required(login_url='staff_login')
+def staff_orders_view(request):
+    # view all orders 
+    orders = Order.objects.all().order_by('-date_time')
+    paginator = Paginator(orders, getattr(settings, "NO_OF_ORDERS_PER_PAGE", 10))
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+    }
+    return render(request, "users/staff/orders.html", context)
