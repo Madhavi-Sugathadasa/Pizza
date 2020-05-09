@@ -23,6 +23,7 @@ urlpatterns = [
     path("staff_orders", views.staff_orders_view, name="staff_orders"),
     path("<int:order_id>/staff_order_details", views.staff_order_details, name="staff_order_details"),
     path("<int:order_id>/change_status", views.change_status, name="change_status"),
+    path("payment_success", views.payment_success, name="payment_success"),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
