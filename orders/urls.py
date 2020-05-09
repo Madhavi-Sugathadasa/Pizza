@@ -14,6 +14,7 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("<int:menu_id>", views.item, name="item"),
     path("<int:menu_id>/add", views.add, name="add"),
+    path("cart", views.shopping_cart, name="cart"),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
