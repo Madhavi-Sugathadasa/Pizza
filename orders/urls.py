@@ -19,6 +19,7 @@ urlpatterns = [
     path("order", views.order, name="order"),
     path("<int:order_id>/confirmation", views.confirmation, name="confirmation"),
     path("orders", views.orders, name="orders"),
+    path("staff_login", views.staff_login_view, name="staff_login"),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
