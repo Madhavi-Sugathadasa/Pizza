@@ -17,6 +17,7 @@ urlpatterns = [
     path("cart", views.shopping_cart, name="cart"),
     path("<int:cart_id>/remove", views.remove_item, name="remove"),
     path("order", views.order, name="order"),
+    path("<int:order_id>/confirmation", views.confirmation, name="confirmation"),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
