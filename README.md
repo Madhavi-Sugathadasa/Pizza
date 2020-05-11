@@ -56,3 +56,20 @@ _small_price_ field for small size item price
 _large_price_ field for large size item price
 
 **_Note_:** if item hasn’t got multi size categories such as small or large, you need to set is_mult_cat to False and then add price either to small_price field or large_price field
+
+
+3. **_Toppings table (Topping model)_**
+used to keep details of all available toppings for pizzas
+
+_name_ field for name of the topping
+
+4. **_Additions table (Addition model)_**
+used to keep details of all available additions (add-ons) for subs 
+
+_name_ field for name of the addition
+
+_small_price_ field for keep price of adding this addition to a small size sub 
+
+_large_price_ field for keep price of adding this addition to a large size sub
+
+---
