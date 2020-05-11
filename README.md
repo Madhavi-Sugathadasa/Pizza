@@ -37,3 +37,22 @@ In order to represent  all available menu items, 4 tables were created.
  used to display  main categories such as Regular Pizza, Sicilian Pizza, subs etc.
  
 _name_ field is used for category name and _display_order_  field for displaying hierarchy  of the categories on the  website. For example if you have decided to display Subs category before Regular Pizza  category, you just need to assign a integer value to Subs higher than Regular pizza
+
+2. **_Menu_Items table - (Menu_Item model)_**
+used to display each menu item in the menu
+
+_type_id_ field to decide under which Menu_Type category each item falls
+
+_Item_name_ field for the name of the menu item
+
+_Image_ field for uploading an Image for each menu item - recommended Image size 350 px by 235px 
+
+_No_of_toppings_ field for keeping required no. of toppings for each item, default value is 0 and i.e. no topping selection required for that item
+
+_is_mult_cat_ field is a boolean field. If item has multiple size categories such as Small or Large, this value is set to True or otherwise set to False
+
+_small_price_ field for small size item price
+
+_large_price_ field for large size item price
+
+**_Note_:** if item hasn’t got multi size categories such as small or large, you need to set is_mult_cat to False and then add price either to small_price field or large_price field
