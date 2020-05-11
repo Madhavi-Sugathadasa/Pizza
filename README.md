@@ -106,3 +106,9 @@ So the contents of the shopping will be saved even if a user closes the window o
 **Note**: let’s say if user added items to the shopping cart and logged out, then after 30 days (it can be any number of days), user logs in back and in case some of the items are no longer available, those items will be automatically removed from the basket on the login.
 
 ---
+
+**Placing an Order**
+
+Once there is **at least one item** in a user’s shopping cart, they will be able to place an order, whereby the user is asked to confirm the items in the shopping cart and the total, before placing an order. This functionality is handled by the _order_ view.
+
+---
