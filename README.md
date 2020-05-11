@@ -92,3 +92,17 @@ _logout_view_ for logout
 
 
 ---
+
+**Shopping Cart**
+
+Once logged in, users will be taken to the _index_ view and will be able to see the **representation of the restaurant’s menu** with the option to **select each item** of the menu. Once selected a menu item, then user will be taken to _item_ view where they can **add** that item (along with toppings or extras and quantity, if appropriate) to their virtual “**shopping cart**.” 
+When users add an item to the cart, they will be taken to the shopping cart page (i.e. _shopping_cart_ view). Also there is a cart icon on top of the Navigation menu and when users click on that icon they will be taken to the shopping cart page.
+Once on the shopping cart page, users can **remove items** (_remove_item_ view) in the event the users change their mind.  or  else they can go back to menu and **add more items**. On finalising to place the order, then they need  to **agreed Terms and conditions** of the website and click place order link 
+
+**Note**: when users add items to the shopping card, the latest basket will be saved to the database Carts table (i.e. Cart Model)
+
+So the contents of the shopping will be saved even if a user closes the window or logs out and logs back in again.
+
+**Note**: let’s say if user added items to the shopping cart and logged out, then after 30 days (it can be any number of days), user logs in back and in case some of the items are no longer available, those items will be automatically removed from the basket on the login.
+
+---
