@@ -73,3 +73,22 @@ _small_price_ field for keep price of adding this addition to a small size sub
 _large_price_ field for keep price of adding this addition to a large size sub
 
 ---
+
+**Adding items**
+
+All the items were added to DB using the Admin UI 
+
+---
+
+**Registration, Login, Logout**
+
+Following views were created using in Django’s built-in users and authentication system:
+
+_register_view_ for registration
+
+_login_view_ for login
+
+_logout_view_ for logout
+
+
+---
