@@ -175,3 +175,25 @@ On customer’s home page also there is a link to see all orders made by the cus
 **Note** - I added pagination for both staff members orders page and customers orders page
 
 ---
+
+**Settings.py**
+
+Following variables were added to the file in order for easy configuration.
+
+_MEDIA_URL_  & _MEDIA_PATH_ - for keep uploaded  item images
+
+_STRIPE_PUBLISHABLE_API_KEY_ and _STRIPE_SECRET_API_KEY_ - to load from environment  variables
+
+_PAYMENT_SUCCESS_URL_ and _PAYMENT_CANCEL_URL_ for Stripe API’s success and cancel urls
+
+_CURRENCY_ and _CURRENCY_SYMBOL_ to configure currency & its symbol for item prices 
+
+_NO_OF_ORDERS_PER_PAGE_  - to display number of orders per page
+
+---
+
+Bootstrap were used for styling together with styles.css file.
+
+**All pages are responsive** 
+
+---
