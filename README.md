@@ -134,3 +134,34 @@ As per the stripe documentation, I am creating Stripe Product item for each of o
 **Note** - When your customer completes a payment, Stripe redirects them to the URL that we specified in the success_url parameter. There are several ways you can confirm that the payment is successful, you can use Stripe dashboard for manually process. I decided to use a webhook , but I cannot create a webhook using localhost. So I didn’t implement that part, only when stripe redirect to my payment_success view , I am saving the order & showing user a order confirmation.
 
 ---
+
+**Saving orders**
+
+There are **two tables** to handle successful orders.
+1. **_Orders table (Order model)_**
+_user_ field for keeping customer details of the customer who placed the order
+
+_total_ field for order total
+
+_date_time_ field for keeping date and time of the order
+
+_status_ field - this is a boolean field. If it is True that means order is completed, otherwise order is pending
+
+_payment_ field - this is also a boolean field , if it is true means payment was successful
+
+_payment_session_ field for keeping the payment session id returned by Stripe payment gateway
+
+2. **_Order_Items table (Order_Item model)_**
+_order_id_ field for keeping relevant order id from above Orders table
+
+_item_name_ field for item name which is created using menu type and menu item name
+
+_size_ field - if item size was selected it will be saved to this field, otherwise null or blank
+
+_description_ field for keeping selected topping details or addition details if required
+
+_quantity_ field  for number of item
+
+_price_ field total price for this item
+
+---
