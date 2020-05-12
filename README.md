@@ -165,3 +165,13 @@ _quantity_ field  for number of item
 _price_ field total price for this item
 
 ---
+
+**Viewing Orders**
+
+There is a different login view for staff login (named _staff_login_view_) and once logged in staff/Site administrators have access to a page where they can **view any orders** that have already been placed. This page allows site administrators/staff to **mark orders as complete**.
+
+On customer’s home page also there is a link to see all orders made by the customer. If staff or site administrators  mark the order as completed, customer will be able to see the status on orders page by clicking on the order.
+
+**Note** - I added pagination for both staff members orders page and customers orders page
+
+---
