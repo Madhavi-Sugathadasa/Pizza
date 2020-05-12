@@ -112,3 +112,25 @@ So the contents of the shopping will be saved even if a user closes the window o
 Once there is **at least one item** in a user’s shopping cart, they will be able to place an order, whereby the user is asked to confirm the items in the shopping cart and the total, before placing an order. This functionality is handled by the _order_ view.
 
 ---
+
+**Payment**
+
+Once users click on the place order link, then they will be redirected to **Stripe’s payment** page.
+In order for this functionality to work, there are two environment variables you need to set up before server start up.
+_STRIPE_PUBLISHABLE_API_KEY_ and _STRIPE_SECRET_API_KEY_
+
+When you setup a stripe account online there will be a section named “Get your test API keys”, you need to setup _STRIPE_PUBLISHABLE_API_KEY_ with publishable key and _STRIPE_SECRET_API_KEY_ with secret key
+
+Eg:
+export STRIPE_PUBLISHABLE_API_KEY = pk_test_Abc
+
+export STRIPE_SECRET_API_KEY = sk_test_dcde
+
+
+Upon successful payment users will be redirected to _payment_success_ view where **a new order will be created** and **saved** to Database. If user clicks _back_ link on Stripe payment page, then user will be taken to _payment_cancel_ view which will take back to shopping cart page.
+
+As per the stripe documentation, I am creating Stripe Product item for each of our products (if that product is already in Stripes product list, then it will be  retrieved  without creating one) , I decided not to create Stripe prices upfront, so I am creating ad-hoc prices at Checkout Session creation.
+
+**Note** - When your customer completes a payment, Stripe redirects them to the URL that we specified in the success_url parameter. There are several ways you can confirm that the payment is successful, you can use Stripe dashboard for manually process. I decided to use a webhook , but I cannot create a webhook using localhost. So I didn’t implement that part, only when stripe redirect to my payment_success view , I am saving the order & showing user a order confirmation.
+
+---
