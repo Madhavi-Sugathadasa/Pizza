@@ -1,6 +1,6 @@
 # Pizza :pizza: :pizza: :pizza:
 
-Created a web application for handling a pizza restaurant’s online orders using **Django** Framework &amp; **Stripe payment**.
+Created a web application for handling a pizza restaurant’s online orders using **Python (Django Framework)**, **Stripe payment**, **SQLite3**, **Javascript**, **HTML5**, **CSS3** and **Bootstrap**.
 
 View screencast on https://youtu.be/Asbk1e8UR2Y
 
